@@ -11,6 +11,84 @@ $(document).ready(function() {
   };
   firebase.initializeApp(firebaseConfig);
 
+  // Authentication
+  $('.login').submit(function(e) {
+    e.preventDefault();
+    $('.loading').show();
+    var email = $('#login_email').val();
+    var password = $('#login_password').val();
+    
+    firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in
+      var user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      // An error happened.
+      $('.loading').hide();
+      var errorMessage = error.message;
+      alert('Error: ' + errorMessage);
+    });
+  });
+
+  $('.signup').submit(function(e) {
+    e.preventDefault();
+    $('.loading').show();
+    var email = $('#signup_email').val();
+    var password = $('#signup_password').val();
+    
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Signed in 
+      var user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      // An error happened.
+      $('.loading').hide();
+      var errorMessage = error.message;
+      alert('Error: ' + errorMessage);
+    });
+  });
+
+  $('.signup_link').click(function() {
+    $('.login').hide();
+    $('.signup').show();
+  });
+
+  $('.login_link').click(function() {
+    $('.login').show();
+    $('.signup').hide();
+  });
+
+  $('.logout_button').click(function() {
+    firebase.auth().signOut().then(() => {
+      // Sign-out successful.
+      location.reload();
+    }).catch((error) => {
+      // An error happened.
+      var errorMessage = error.message;
+      alert('Error: ' + errorMessage);
+    });
+  });
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/firebase.User
+
+      var uid = user.uid;
+      var uemail = user.email;
+      // console.log(uid);
+
+      $('.userOptions span').text(uemail);
+      
+      $('.loading').show();
+      $('.login').hide();
+      $('.logged').show();
+
+      helloWorld();
 
   // Configure brain
   var brainConfig = {
